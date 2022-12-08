@@ -1,8 +1,15 @@
 import numpy as np
 import json
 import pickle
-from flatten_list import *
-# from src import flatten_list
+
+
+def flatten_list(list):
+    flat_list = []
+    for sublist in list:
+        for item in sublist:
+            flat_list.append(item)
+    return flat_list
+
 def padding(a, padwhat=1):
     if padwhat=='none':
         return a
