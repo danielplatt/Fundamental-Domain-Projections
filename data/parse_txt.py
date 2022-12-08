@@ -72,23 +72,27 @@ def return_cleaned_data(additionalperm=0,padwhat=1): #k is the added number of m
 
     return [matrixlist,hlist]
 
-cleandata = return_cleaned_data(additionalperm=10,padwhat=0)
-matrixlist=cleandata[0]
-matrixlist=[flatten_list.flatten_list(A) for A in matrixlist] #This should be activated in the end but not for testing
-cleandata[0]=matrixlist
+cleandata = return_cleaned_data(additionalperm=0,padwhat=0)
 
-f = open('cleandata_with_zeroes_in_matrixform_with_extra_permutations.pckl', 'wb')
+# matrixlist=cleandata[0]
+# matrixlist=[flatten_list(A) for A in matrixlist] #This should be activated in the end but not for testing
+# cleandata[0]=matrixlist
+
+print(np.array(cleandata[1]).shape) # (7890, 2) --- these are the Hodge numbers
+print(np.array(cleandata[0]).shape) # (7890, 12, 15) --- these are the CICY matrices
+
+f = open('cicy_original.pckl', 'wb')
 #Windows: f = open('data/cleandata_with_zeroes.pckl', 'wb')
 pickle.dump(cleandata, f)
 f.close()
 
-cleandata = return_cleaned_data(additionalperm=10,padwhat=1)
-f = open('cleandata_with_ones_in_matrixform_with_extra_permutations.pckl', 'wb')
+# cleandata = return_cleaned_data(additionalperm=10,padwhat=1)
+# f = open('cleandata_with_ones_in_matrixform_with_extra_permutations.pckl', 'wb')
 #Windows: f = open('data/cleandata_with_zeroes.pckl', 'wb')
-pickle.dump(cleandata, f)
-f.close()
+# pickle.dump(cleandata, f)
+# f.close()
 
-cleandata=return_cleaned_data(additionalperm=0,padwhat='none')
-f =  open('matrixform_notpadded_notpermuted.pckl', 'wb')
-pickle.dump(cleandata, f)
-f.close()
+# cleandata=return_cleaned_data(additionalperm=0,padwhat='none')
+# f =  open('matrixform_notpadded_notpermuted.pckl', 'wb')
+# pickle.dump(cleandata, f)
+# f.close()
