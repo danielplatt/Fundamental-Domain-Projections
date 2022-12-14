@@ -1,41 +1,38 @@
 import numpy as np
 from numpy.linalg import matrix_power
 
-def transpose_matrix_entryfunction(k,m,index):
-    i,j=index
-    if (i==k and j==m) or (i==m and j==k):
-        return 1
-    if i==j and not (i==k or i==m):
-        return 1
-    return 0
-
-def cycle_matrix_entryfunction(n,index):
-    i,j=index
-    if j==i+1:
-        return 1
-    if i==n-1 and j==0:
-        return 1
-    return 0
-
-def transposition(k,m,n):
+def transposition(k:int ,m: int,n:int):
+    '''Permutation matrix of size nxn respresenting a transposition of element k with element m'''
+    def transpose_matrix_entryfunction(k, m, index):
+        '''A function whose output will be the transposition k-m-matrix at a given index.'''
+        i, j = index
+        if (i == k and j == m) or (i == m and j == k):
+            return 1
+        if i == j and not (i == k or i == m):
+            return 1
+        return 0
     return np.array([[transpose_matrix_entryfunction(k,m,[i,j]) for i in range(n)] for j in range(n)])
 
 def cycle(power,n):
+    '''Permutation matrix representing a cycle to the power n. '''
+    def cycle_matrix_entryfunction(n, index):
+        i, j = index
+        if j == i + 1:
+            return 1
+        if i == n - 1 and j == 0:
+            return 1
+        return 0
     #n=dimension of the square matrix, this is to produce cyclic permutations of a sq matrix
     A=np.array([[cycle_matrix_entryfunction(n, [i, j]) for i in range(n)] for j in range(n)])
     return matrix_power(A,power)
 
 def flatten_onelevel(arr):
+    '''Flatten a numpy array on the top level. Given a matrix, stack all the rows next to each other,'''
     sh=list(np.shape(arr))
     newshape=sh[2:]
     newshape.insert(0,sh[0]*sh[1])
     return np.reshape(arr,tuple(newshape))
 
-def matrix_equality(matrix1,matrix2):
-    if np.array_equal(matrix1,matrix2):
-        return 1
-    else:
-        return 0
 def permuteMatrix(matrix):
     '''
     :param: matrix: A two-dimensional numpy array, e.g. np.array([[1,2,3],[4,5,6]])
@@ -50,8 +47,8 @@ def permuteMatrix(matrix):
     return newMatrix
 
 #this Function returns the position of the maximum in an array, np.argmax doesn't give a tupel but just a number
-def argmax_nonflat(matrix):
-    return np.unravel_index(matrix.argmax(), matrix.shape)
+#def argmax_nonflat(matrix):
+#    return np.unravel_index(matrix.argmax(), matrix.shape)
 
 #Taking the inner product of two matrices, treating both as a vector
 def matrix_innerproduct(A,B):
@@ -80,3 +77,8 @@ def matrix_order(x,y,x0):
             return 0
         if b<a:
             return 1
+
+if __name__=='__main__':
+    arr = np.array([[1,2,3],[4,5,6]])
+    print(np.reshape(arr,(-1)))
+    #print(flatten_onelevel(arr))

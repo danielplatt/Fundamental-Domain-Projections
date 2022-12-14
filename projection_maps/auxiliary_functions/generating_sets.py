@@ -27,7 +27,7 @@ class generators:
                 generators_col = [transposition(l, l + 1, m) for l in range(m - 1)]
                 return generators_col
 
-            if self.perm_axis == '':
+            if self.perm_axis == 'diagonal':
                 return []
 
         if self.gen_type == 'alltranspositions':
