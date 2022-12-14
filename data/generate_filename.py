@@ -1,6 +1,5 @@
 
 
-
 def generate_filename(projection_type: str, is_permuted: bool):
     file_name = 'cicy_'
     if projection_type == 'dirichlet':

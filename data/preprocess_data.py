@@ -3,8 +3,8 @@ import pickle
 from tqdm import tqdm
 
 from data.generate_filename import generate_filename
-from fundamental_domain_projections.combinatorial_project import combinatorial_project
-from fundamental_domain_projections.dirichlet_project import dirichlet_project
+from projection_maps.combinatorial_project import combinatorial_project
+from projection_maps.dirichlet_project import dirichlet_project
 
 
 def permuteSingleMatrix(matrix: np.array) -> np.array:
