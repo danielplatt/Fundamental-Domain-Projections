@@ -54,7 +54,7 @@ def gradient_ascent_seeded(x: np.array, x0='Daniel', gen_type='neighbourtranspos
 
 ##run gradient_ascent for all seeds##
     k, m = np.shape(x)
-    seeded_ascents=np.array([[gradient_ascent(np.dot(np.dot(cycle(i,k),x),cycle(j,m)), x0, gen_type=gen_type) for i in range(k)] for j in range(m)])
+    seeded_ascents=np.array([[gradient_ascent(np.dot(np.dot(pmatrix_cycle(i, k), x), pmatrix_cycle(j, m)), x0, gen_type=gen_type) for i in range(k)] for j in range(m)])
 
 ##find which seed has achieved the maximum inner product##
     k, m, n, l = np.shape(seeded_ascents)

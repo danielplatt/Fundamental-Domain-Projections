@@ -1,5 +1,5 @@
 import numpy as np
-from projection_maps.auxiliary_functions.matrix_permutation_functions import argmax_nonflat, transposition, permuteMatrix
+from projection_maps.auxiliary_functions.matrix_permutation_functions import argmax_nonflat, pmatrix_trans, permuteMatrix
 from functools import cmp_to_key #For user defined sorting
 
 def row_ordering(row1: np.array, row2: np.array, averaging: bool)-> int:
@@ -27,7 +27,7 @@ def max_to_topleft(matrix: np.array)->np.array:
     '''
     k, m = matrix.shape
     i, j = argmax_nonflat(matrix)
-    return np.dot(np.dot(transposition(i, 0, k), matrix), transposition(0, j, m))
+    return np.dot(np.dot(pmatrix_trans(i, 0, k), matrix), pmatrix_trans(0, j, m))
 
 
 def sort_rows(matrix: np.array, averaging: bool)-> np.array:

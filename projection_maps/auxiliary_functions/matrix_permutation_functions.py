@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.linalg import matrix_power
 
-def transposition(k:int ,m: int,n:int):
+def pmatrix_trans(k:int, m: int, n:int):
     '''Permutation matrix of size nxn respresenting a transposition of element k with element m'''
     def transpose_matrix_entryfunction(k, m, index):
         '''A function whose output will be the transposition k-m-matrix at a given index.'''
@@ -13,7 +13,7 @@ def transposition(k:int ,m: int,n:int):
         return 0
     return np.array([[transpose_matrix_entryfunction(k,m,[i,j]) for i in range(n)] for j in range(n)])
 
-def cycle(power,n):
+def pmatrix_cycle(power: int, n: int) -> np.array:
     '''Permutation matrix representing a cycle to the power n. '''
     def cycle_matrix_entryfunction(n, index):
         i, j = index
@@ -26,14 +26,8 @@ def cycle(power,n):
     A=np.array([[cycle_matrix_entryfunction(n, [i, j]) for i in range(n)] for j in range(n)])
     return matrix_power(A,power)
 
-def flatten_onelevel(arr):
-    '''Flatten a numpy array on the top level. Given a matrix, stack all the rows next to each other,'''
-    sh=list(np.shape(arr))
-    newshape=sh[2:]
-    newshape.insert(0,sh[0]*sh[1])
-    return np.reshape(arr,tuple(newshape))
 
-def permuteMatrix(matrix):
+def permuteMatrix(matrix: np.array) -> np.array:
     '''
     :param: matrix: A two-dimensional numpy array, e.g. np.array([[1,2,3],[4,5,6]])
     :return: Rows and columns of this matrix randomly permuted, eg. np.array([[5,4,6],[2,1,3]])
@@ -46,31 +40,31 @@ def permuteMatrix(matrix):
     newMatrix = newMatrix[rowPermutation]
     return newMatrix
 
-#this Function returns the position of the maximum in an array, np.argmax doesn't give a tupel but just a number
-#def argmax_nonflat(matrix):
-#    return np.unravel_index(matrix.argmax(), matrix.shape)
 
-#Taking the inner product of two matrices, treating both as a vector
-def matrix_innerproduct(A,B):
-    assert np.shape(A)==np.shape(B)
-    k,m=np.shape(A)
-    prod=k*m
-    return np.dot(A.reshape(prod),B.reshape(prod))
+def matrix_innerproduct(matrix1: np.array,matrix2: np.array) -> float:
+    '''Flatten two matrices and return their inner product.'''
+    return np.dot(matrix1.reshape(-1),matrix2.reshape(-1))
 
-def matrix_order(x,y,x0):
+def matrix_order(matrix1: np.array, matrix2: np.array, x0) -> int:
+    '''Define an order relation on the space of matrices by comparing the inner product with a fixed matrix x0.
+    :param matrix1, matrix2: matrices to be compared
+    :param x0: matrix defining the order relation, can also be 'Daniel', which imposes lexicographical order
+    :return: 1 if matrix1<matrix2, 1 if matrix2>matrix1, 0 if matrix1=matrix2
+    '''
     if x0=='Daniel':
-        a=x.flatten()
-        b=y.flatten()
+        a=matrix1.flatten()
+        b=matrix2.flatten()
         if (a==b).all():
             return 0
+        #find the first index where a and b are unequal
         idx = np.where( (a>b) != (a<b) )[0][0]
         if a[idx] < b[idx]:
             return -1
         else:
             return 1
     else:
-        a=matrix_innerproduct(x,x0)
-        b=matrix_innerproduct(y, x0)
+        a=matrix_innerproduct(matrix1, x0)
+        b=matrix_innerproduct(matrix2, x0)
         if a<b:
             return -1
         if a==b:
@@ -80,5 +74,6 @@ def matrix_order(x,y,x0):
 
 if __name__=='__main__':
     arr = np.array([[1,2,3],[4,5,6]])
-    print(np.reshape(arr,(-1)))
+    print(matrix_innerproduct(arr,arr))
+    #print(np.reshape(arr,(-1)))
     #print(flatten_onelevel(arr))
