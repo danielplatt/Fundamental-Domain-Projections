@@ -1,6 +1,6 @@
 import numpy as np
 from projection_maps.auxiliary_functions.generating_sets import *
-from projection_maps.auxiliary_functions.matrix_permutation_functions import *
+from projection_maps.auxiliary_functions.matrix_auxiliary_functions import *
 from functools import cmp_to_key #For user defined sorting
 
 def gradient_ascent(x: np.array,x0='Daniel',gen_type='neighbourtranspositions'):
@@ -63,6 +63,7 @@ def gradient_ascent_seeded(x: np.array, x0='Daniel', gen_type='neighbourtranspos
     if x0=='Daniel':
     #Here we are faced with the task to find the maximum of a list for a non-standard ordering. cmp_to_key allows for self defined orderings
         seeds_sorted=sorted(seeded_ascents_flattened, key=cmp_to_key(lambda x,y: matrix_order(x,y,x0)))
+        #this is slightly wasteful, finding the maximum value of a list of length n takes (n-1) comparisons, while      sorting a list has complexity n*log(n)
         return seeds_sorted[-1]
 
     else:

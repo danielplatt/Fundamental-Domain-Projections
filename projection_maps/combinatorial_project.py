@@ -1,5 +1,5 @@
 import numpy as np
-from projection_maps.auxiliary_functions.matrix_permutation_functions import argmax_nonflat, pmatrix_trans, permuteMatrix
+from projection_maps.auxiliary_functions.matrix_auxiliary_functions import argmax_nonflat, pmatrix_trans, permuteMatrix
 from functools import cmp_to_key #For user defined sorting
 
 def row_ordering(row1: np.array, row2: np.array, averaging: bool)-> int:

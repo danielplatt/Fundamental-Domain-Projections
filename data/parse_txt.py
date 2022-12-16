@@ -1,98 +1,90 @@
 import numpy as np
 import json
+from projection_maps.auxiliary_functions.matrix_auxiliary_functions import permuteMatrix, pad_matrix
 import pickle
+from download_cicy_raw import download_cicy_raw
+
+def findmatrix(text,start_index=0):
+    '''In a string that comes from rawdata.txt, return the next matrix and its index is.
+        :param text: the string to search for, only makes sense if it is a substring of rawdata.txt
+        :param start_index: the index in the string from which we start the search
+        :return: the next matrix and its final index in the string
+    '''
+
+    # Find the next matrix in the text beginning from start_index
+    matrix_first_index = text.index('}\n{',start_index)
+    matrix_last_index = text.index('}\n\n',start_index)
+    matrix_string = text[matrix_first_index + 2:matrix_last_index]
+
+    # convert into the standard python list of list notation
+    matrix_string = matrix_string.replace('{', '[')
+    matrix_string = matrix_string.replace('}\n', '],')
+    matrix_string = '[' + matrix_string + ']]'
+
+    # convert the matrix stored as a string into a python array
+    matrix_string = np.array(json.loads(matrix_string))
+    return matrix_string,matrix_last_index
 
 
-def flatten_list(list):
-    flat_list = []
-    for sublist in list:
-        for item in sublist:
-            flat_list.append(item)
-    return flat_list
+def find_hodge(text: str,start_index=0):
+    '''In a string that comes from rawdata.txt, return the next value of H11 and H21 as an integer.
+    :param text: the string to search for, only makes sense if it is a substring of rawdata.txt
+    :param start_index: the index in the string from which we start the search
+    :return: two integers, the values of the next hodge numbers in the string
+    '''
 
-def padding(a, padwhat=1):
-    if padwhat=='none':
-        return a
-    else:
-        (c,r)=a.shape
-        b=np.zeros((12,15))
-        b[:c,:r]=a
-        for i in range(c,12):
-            # write ones or zeroes on the diagonal
-            b[i,r+i-c]=padwhat
-        return b
+    # in the text file, the second hodge number always appears 8 characters after the 'H21' or 'H11'
+    h1_first_index=text.index('H11',start_index)+8
+    h1_last_index=h1_first_index+3
 
-def findmatrix(text):
-    a = text.index('}\n{')
-    b = text.index('}\n\n')
-    l = text[a + 2:b]
-    l = l.replace('{', '[')
-    l = l.replace('}\n', '],')
-    l = '[' + l + ']]'
-    l = np.array(json.loads(l))
-    return [l,b]
+    h2_first_index=text.index('H21',start_index)+8
+    h2_last_index=h2_first_index+3
 
-def permuterow(a,p):
-    return a[list(p)]
-def permutecolumn(a,p):
-    return permuterow(a.transpose(),p).transpose()
-def addpermutations(a,n):
-    return [permutecolumn(permuterow(a,np.random.permutation(12)),np.random.permutation(15)) for i in range(n)]
+    # We don't know whether the hodge number has 1 or 2 digits, so we might have to remove the last character
+    while text[h1_last_index] == '\n' or text[h1_last_index]== 'H':
+        h1_last_index = h1_last_index -1
 
-def findh1(text):
-    a=text.index('H11')
-    h1=text[a+9:a+12]
-    while h1[-1] == '\n' or h1[-1]== 'H':
-        h1=h1[0:len(h1)-1]
-    return int(h1)
+    while text[h2_last_index] == '\n' or text[h2_last_index]== 'C':
+        h2_last_index = h2_last_index -1
 
-def findh2(text):
-    a=text.index('H21')
-    h2=text[a+9:a+12]
-    while h2[-1] == '\n' or h2[-1] == 'C':
-        h2=h2[0:len(h2)-1]
-    return int(h2)
+    h1 = int(text[h1_first_index:h1_last_index+1])
+    h2 = int(text[h2_first_index:h2_last_index+1])
 
-def return_cleaned_data(additionalperm=0,padwhat=1): #k is the added number of matrices with a row permutation, m the same for column perm
+    return [h1,h2]
+
+def cicy_hodge_list(n_perm=0, pad_with=0)->list:
+    '''Return a numpy array with all 7890 CICY matrices and one numpy array with the respective first and second hodge number.
+    :param n_perm: number of additional permutations applied to each cicy matrix. If n_perm=0 then we recover the original cicy list
+    :param pad_with: integer put on the main diagonal when the cicy matrix is written as an 12x15 matrix.
+    :return: list of cicy matrices and a list of their hodge numbers
+    '''
     f=open("rawdata.txt", "r") #data/rawdata.txt for windows and rawdata.txt for Ubuntu
     contents=f.read()
-    matrixlist=[]
-    hlist=[]
-    while len(contents)>200:
-        hlist.append([findh1(contents),findh2(contents)])
-        matrix=padding(findmatrix(contents)[0],padwhat)
-        matrixlist.append(matrix)
-        contents=contents[findmatrix(contents)[1]+1:len(contents)]
-    matrixlist.append(padding(np.array([[5]])))
-    hlist.append([1,101])
-    n = len(matrixlist)
-    for j in range(n):
-        matrixlist=matrixlist[:j]+addpermutations(matrixlist[j],additionalperm)+matrixlist[j:]
-        hlist=hlist[0:j]+[hlist[j] for i in range(additionalperm)]+hlist[j:]
+    matrix_list=[]
+    hodge_list=[]
+    curr_ind = 0
 
-    return [matrixlist,hlist]
+    while curr_ind < len(contents)-3:
 
-cleandata = return_cleaned_data(additionalperm=0,padwhat=0)
+        hodge_numbers = find_hodge(contents,curr_ind)
+        hodge_list.append(hodge_numbers)
+        hodge_list = hodge_list + [hodge_numbers] * n_perm
 
-# matrixlist=cleandata[0]
-# matrixlist=[flatten_list(A) for A in matrixlist] #This should be activated in the end but not for testing
-# cleandata[0]=matrixlist
+        matrix, final_index = findmatrix(contents,curr_ind)
+        matrix=pad_matrix(matrix, pad_with)
+        matrix_list.append(matrix)
+        permuted_matrices = list(map(permuteMatrix, [matrix] * n_perm))
+        matrix_list = matrix_list + permuted_matrices
 
-print(np.array(cleandata[1]).shape) # (7890, 2) --- these are the Hodge numbers
-print(np.array(cleandata[0]).shape) # (7890, 12, 15) --- these are the CICY matrices
+        curr_ind = final_index + 1
 
-f = open('cicy_original.pckl', 'wb')
-#Windows: f = open('data/cleandata_with_zeroes.pckl', 'wb')
-pickle.dump(cleandata, f)
-f.close()
+    f.close()
 
-# cleandata = return_cleaned_data(additionalperm=10,padwhat=1)
-# f = open('cleandata_with_ones_in_matrixform_with_extra_permutations.pckl', 'wb')
-#Windows: f = open('data/cleandata_with_zeroes.pckl', 'wb')
-# pickle.dump(cleandata, f)
-# f.close()
+    assert len(hodge_list) == 7890 and len(matrix_list)==7890
 
-# cleandata=return_cleaned_data(additionalperm=0,padwhat='none')
-# f =  open('matrixform_notpadded_notpermuted.pckl', 'wb')
-# pickle.dump(cleandata, f)
-# f.close()
+    return matrix_list,hodge_list
+
+
+if __name__=='__main__':
+    download_cicy_raw()
+    matrixlist, hlist = cicy_hodge_list(n_perm=0, pad_with=0)

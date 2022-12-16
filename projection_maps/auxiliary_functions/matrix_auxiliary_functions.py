@@ -72,6 +72,22 @@ def matrix_order(matrix1: np.array, matrix2: np.array, x0) -> int:
         if b<a:
             return 1
 
+def pad_matrix(matrix, pad_with=1):
+    '''Embebds a matrix of smaller size into a 12x15 matrix by padding it with zeros and additional elements on the main diagonal
+    :param matrix: matrix to be padded
+    :param pad_with: float (or None)  that is put on the diagonal of the larger matrix
+    '''
+    if pad_with== None:
+        return matrix
+    else:
+        c,r=np.shape(matrix)
+        b=np.zeros((12,15))
+        b[:c,:r]=matrix
+        for i in range(c,12):
+            # write pad_with on the diagonal
+            b[i,r+i-c]=pad_with
+        return b
+
 if __name__=='__main__':
     arr = np.array([[1,2,3],[4,5,6]])
     print(matrix_innerproduct(arr,arr))

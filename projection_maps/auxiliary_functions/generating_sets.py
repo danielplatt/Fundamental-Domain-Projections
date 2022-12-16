@@ -1,4 +1,4 @@
-from projection_maps.auxiliary_functions.matrix_permutation_functions import *
+from projection_maps.auxiliary_functions.matrix_auxiliary_functions import *
 
 class generators:
     '''A class for generating sets for either row or column permutations or transpostions.
