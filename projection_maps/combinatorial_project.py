@@ -1,6 +1,7 @@
 import numpy as np
-from projection_maps.auxiliary_functions.matrix_auxiliary_functions import argmax_nonflat, pmatrix_trans, permuteMatrix
+from projection_maps.auxiliary_functions.matrix_auxiliary_functions import argmax_nonflat, pmatrix_trans, permuteSingleMatrix
 from functools import cmp_to_key #For user defined sorting
+
 
 def row_ordering(row1: np.array, row2: np.array, averaging: bool)-> int:
     '''Determine which row is larger, either lexicographically or by their average.
@@ -70,7 +71,7 @@ def combinatorial_project(matrix: np.array, ascending=True, averaging='True', pe
     (m, k) = matrix.shape
     P = np.linspace(-0.4, 0.4, m * k).reshape((m, k))
     if pert_is_permuted:
-        P=permuteMatrix(P)
+        P=permuteSingleMatrix(P)
     return np.round(combinatorial_unperturbed(matrix + P))
 
 

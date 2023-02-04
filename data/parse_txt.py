@@ -1,6 +1,6 @@
 import numpy as np
 import json
-from projection_maps.auxiliary_functions.matrix_auxiliary_functions import permuteMatrix, pad_matrix
+from projection_maps.auxiliary_functions.matrix_auxiliary_functions import permuteSingleMatrix, pad_matrix
 import pickle
 from download_cicy_raw import download_cicy_raw
 
@@ -73,7 +73,7 @@ def cicy_hodge_list(n_perm=0, pad_with=0)->list:
         matrix, final_index = findmatrix(contents,curr_ind)
         matrix=pad_matrix(matrix, pad_with)
         matrix_list.append(matrix)
-        permuted_matrices = list(map(permuteMatrix, [matrix] * n_perm))
+        permuted_matrices = list(map(permuteSingleMatrix, [matrix] * n_perm))
         matrix_list = matrix_list + permuted_matrices
 
         curr_ind = final_index + 1

@@ -1,6 +1,10 @@
 import numpy as np
 from numpy.linalg import matrix_power
 
+def argmax_nonflat(matrix):
+    '''Return the position of the maximum in a numpy array as a tuple.'''
+    return np.unravel_index(matrix.argmax(), matrix.shape)
+
 def pmatrix_trans(k:int, m: int, n:int):
     '''Permutation matrix of size nxn respresenting a transposition of element k with element m'''
     def transpose_matrix_entryfunction(k, m, index):
@@ -27,7 +31,7 @@ def pmatrix_cycle(power: int, n: int) -> np.array:
     return matrix_power(A,power)
 
 
-def permuteMatrix(matrix: np.array) -> np.array:
+def permuteSingleMatrix(matrix: np.array) -> np.array:
     '''
     :param: matrix: A two-dimensional numpy array, e.g. np.array([[1,2,3],[4,5,6]])
     :return: Rows and columns of this matrix randomly permuted, eg. np.array([[5,4,6],[2,1,3]])

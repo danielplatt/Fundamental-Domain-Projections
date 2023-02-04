@@ -5,20 +5,7 @@ from tqdm import tqdm
 from data.generate_filename import generate_filename
 from projection_maps.combinatorial_project import combinatorial_project
 from projection_maps.dirichlet_project import dirichlet_project
-
-
-def permuteSingleMatrix(matrix: np.array) -> np.array:
-    '''
-    :param: matrix: A two-dimensional numpy array, e.g. np.array([[1,2,3],[4,5,6]])
-    :return: Rows and columns of this matrix randomly permuted, eg. np.array([[5,4,6],[2,1,3]])
-    '''
-    numberOfRows = len(matrix)
-    numberofColumns = len(matrix[0])
-    rowPermutation = list(np.random.permutation(numberOfRows))
-    columnPermutation = list(np.random.permutation(numberofColumns))
-    newMatrix = matrix[:,columnPermutation]
-    newMatrix = newMatrix[rowPermutation]
-    return newMatrix
+from projection_maps.auxiliary_functions.matrix_auxiliary_functions import permuteSingleMatrix
 
 def preprocess_data(projection_type: str, is_permuted: bool) -> np.array:
     '''Requires file cicy_original.pckl, creates files
