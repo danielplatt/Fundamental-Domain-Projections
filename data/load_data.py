@@ -1,6 +1,6 @@
 import pickle
 
-from data.generate_filename import generate_filename
+from data.generate_filename import generate_filepath
 from data.preprocess_data import preprocess_data
 
 from log import get_logger
@@ -29,7 +29,7 @@ def load_data(projection_type: str, is_permuted: bool, is_called_recursively=Fal
     (2, 12, 15) containing the CICY matrices. The second is a nested list of shape
     (2, 2) containing the Hodge numbers.
     '''
-    file_name = generate_filename(projection_type, is_permuted)
+    file_name = generate_filepath(projection_type, is_permuted)
 
     try:
         with open(file_name, 'rb') as f:
