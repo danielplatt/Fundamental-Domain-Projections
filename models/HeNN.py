@@ -1,12 +1,10 @@
 import numpy as np
-from keras import backend as K
 import tensorflow as tf
 from data.load_data import load_data
 from sklearn.model_selection import train_test_split
 
+from util.soft_acc import soft_acc
 
-def soft_acc(y_true, y_pred):
-    return K.mean(K.equal(K.round(y_true), K.round(y_pred)))
 
 def get_he_network():
     inp = tf.keras.layers.Input(shape=(12,15,))
@@ -27,7 +25,7 @@ def train_he_network(X_train, y_train, X_test, y_test):
     model = get_he_network()
     history = model.fit(
         X_train, y_train,
-        epochs=20,
+        epochs=500,
         validation_data=(X_test, y_test),
     )
     return history.history['val_soft_acc'][-1]
