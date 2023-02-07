@@ -2,6 +2,7 @@ import numpy as np
 import json
 from projection_maps.auxiliary_functions.matrix_auxiliary_functions import permuteSingleMatrix, pad_matrix
 import pickle
+from os.path import exists
 from download_cicy_raw import download_cicy_raw
 
 def findmatrix(text,start_index=0):
@@ -52,39 +53,39 @@ def find_hodge(text: str,start_index=0):
 
     return [h1,h2]
 
-def cicy_hodge_list(n_perm=0, pad_with=0)->list:
-    '''Return a numpy array with all 7890 CICY matrices and one numpy array with the respective first and second hodge number.
+def create_cicy_original_pckl(n_perm=0, pad_with=0):
+    '''Store a numpy array with all 7890 CICY matrices and one numpy array with the respective first and second hodge number in 'cicy_original.pckl'
     :param n_perm: number of additional permutations applied to each cicy matrix. If n_perm=0 then we recover the original cicy list
     :param pad_with: integer put on the main diagonal when the cicy matrix is written as an 12x15 matrix.
     :return: list of cicy matrices and a list of their hodge numbers
     '''
-    f=open("rawdata.txt", "r") #data/rawdata.txt for windows and rawdata.txt for Ubuntu
-    contents=f.read()
-    matrix_list=[]
-    hodge_list=[]
-    curr_ind = 0
+    if exists('cicy_original.pckl') == True:
+        FileExistsError('The file cicy_original.pckl already exists and has not been created again.')
+    else:
+        download_cicy_raw()
+        f=open("rawdata.txt", "r") #data/rawdata.txt for windows and rawdata.txt for Ubuntu
+        contents=f.read()
+        matrix_list=[]
+        hodge_list=[]
+        curr_ind = 0
 
-    while curr_ind < len(contents)-3:
+        while curr_ind < len(contents)-3:
 
-        hodge_numbers = find_hodge(contents,curr_ind)
-        hodge_list.append(hodge_numbers)
-        hodge_list = hodge_list + [hodge_numbers] * n_perm
+            hodge_numbers = find_hodge(contents,curr_ind)
+            hodge_list.append(hodge_numbers)
+            hodge_list = hodge_list + [hodge_numbers] * n_perm
 
-        matrix, final_index = findmatrix(contents,curr_ind)
-        matrix=pad_matrix(matrix, pad_with)
-        matrix_list.append(matrix)
-        permuted_matrices = list(map(permuteSingleMatrix, [matrix] * n_perm))
-        matrix_list = matrix_list + permuted_matrices
+            matrix, final_index = findmatrix(contents,curr_ind)
+            matrix=pad_matrix(matrix, pad_with)
+            matrix_list.append(matrix)
+            permuted_matrices = list(map(permuteSingleMatrix, [matrix] * n_perm))
+            matrix_list = matrix_list + permuted_matrices
 
-        curr_ind = final_index + 1
+            curr_ind = final_index + 1
 
-    f.close()
+        f.close()
 
-    assert len(hodge_list) == 7890 and len(matrix_list)==7890
+        assert len(hodge_list) == 7890 and len(matrix_list)==7890
 
-    return matrix_list,hodge_list
-
-
-if __name__=='__main__':
-    download_cicy_raw()
-    matrixlist, hlist = cicy_hodge_list(n_perm=0, pad_with=0)
+        with open('cicy_original.pckl', 'wb') as f:
+            pickle.dump([matrix_list, hodge_list], f)

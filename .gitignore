@@ -1,0 +1,4 @@
+data/rawdata.txt
+data/cicy_original.pckl
+data/cicy_permuted.pckl
+__pycache__/
