@@ -1,4 +1,9 @@
 from keras import layers, models, optimizers
+from data.load_data import load_data
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+from util.soft_acc import soft_acc
 
 
 def equivariant_layer(inp, number_of_channels_in, number_of_channels_out):
@@ -72,11 +77,24 @@ def get_hartford_network(pooling='sum'):
     model.compile(
         loss='mean_squared_error',
         optimizer=optimizers.Adam(0.001),
-        metrics=[],
+        metrics=[soft_acc],
     )
     return model
+
+def train_hartford_network(X_train, y_train, X_test, y_test):
+    model = get_hartford_network()
+    history = model.fit(
+        X_train, y_train,
+        epochs=200,
+        validation_data=(X_test, y_test),
+        batch_size=1
+    )
+    return history.history['val_soft_acc'][-1]
 
 
 if __name__ == '__main__':
     model = get_hartford_network()
     model.summary()
+    data = load_data('', False)
+    X_train, X_test, y_train, y_test = train_test_split(np.array(data[0]), np.array(data[1])[:, 1], test_size=0.5)
+    print(f'Test Accuracy of He Neural Network after one run: {train_hartford_network(X_train, y_train, X_test, y_test)}')
