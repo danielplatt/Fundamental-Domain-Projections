@@ -8,7 +8,7 @@ from log import get_logger
 log = get_logger(__name__)
 
 
-def load_data(projection_type: str, is_permuted: bool, is_called_recursively=False):
+def load_data(projection_type: str, is_permuted: bool):
     '''
     Loads the CICY dataset, including matrices (which are the input values of
     the problem) and Hodge numbers (which are the output values of the problem.
@@ -31,17 +31,15 @@ def load_data(projection_type: str, is_permuted: bool, is_called_recursively=Fal
     '''
     file_name = generate_filepath(projection_type, is_permuted)
 
-    try:
-        with open(file_name, 'rb') as f:
-            return pickle.load(f)
-    except FileNotFoundError as e:
-        if is_called_recursively:
-            log.warning(f'File {file_name} not found. Function load_data returns None now.')
-        else:
+    while True:
+        try:
+            print(file_name)
+            with open(file_name, 'rb') as f:
+                return pickle.load(f)
+        except FileNotFoundError as e:
             log.warning(f'File {file_name} not found. Trying to automatically run preprocess_data.py to create the file.')
-        preprocess_data(projection_type, is_permuted)
-        log.info(f'Calling preprocess_data successful. The file should have been generated.')
-        return load_data(projection_type, is_permuted, is_called_recursively=True)
+            preprocess_data(projection_type, is_permuted)
+            log.info(f'Calling preprocess_data successful. The file should have been generated.')
 
 
 if __name__ == '__main__':

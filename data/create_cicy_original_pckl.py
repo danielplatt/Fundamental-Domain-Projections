@@ -2,8 +2,10 @@ import numpy as np
 import json
 from projection_maps.auxiliary_functions.matrix_auxiliary_functions import permuteSingleMatrix, pad_matrix
 import pickle
+import os
 from os.path import exists
-from download_cicy_raw import download_cicy_raw
+from data.download_cicy_raw import download_cicy_raw
+
 
 def findmatrix(text,start_index=0):
     '''In a string that comes from rawdata.txt, return the next matrix and its index is.
@@ -63,7 +65,9 @@ def create_cicy_original_pckl(n_perm=0, pad_with=0):
         FileExistsError('The file cicy_original.pckl already exists and has not been created again.')
     else:
         download_cicy_raw()
-        f=open("rawdata.txt", "r") #data/rawdata.txt for windows and rawdata.txt for Ubuntu
+        input_file_name = 'rawdata.txt'
+        input_filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), f'{input_file_name}')
+        f=open(input_filepath, "r") #data/rawdata.txt for windows and rawdata.txt for Ubuntu # using os.path works on all platforms
         contents=f.read()
         matrix_list=[]
         hodge_list=[]
@@ -87,5 +91,7 @@ def create_cicy_original_pckl(n_perm=0, pad_with=0):
 
         assert len(hodge_list) == 7890 and len(matrix_list)==7890
 
-        with open('cicy_original.pckl', 'wb') as f:
+        output_file_name = 'cicy_original.pckl'
+        output_filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), output_file_name)
+        with open(output_filepath, 'wb') as f: # using os.path now works on all platforms
             pickle.dump([matrix_list, hodge_list], f)
