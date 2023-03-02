@@ -1,9 +1,12 @@
 from tensorflow.keras.models import Model
+from data.load_data import load_data
+from sklearn.model_selection import train_test_split
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.layers import Input, Conv2D, Dense, LeakyReLU, Dropout, ZeroPadding2D, BatchNormalization, Flatten, concatenate
 from tensorflow.keras.optimizers   import Adam
 from tensorflow.keras.regularizers import l1_l2
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 
 
 def get_erbin_finotello_network():
@@ -171,7 +174,58 @@ def scan_inception_model(input_shape,
     # return the compiled model
     return model
 
+def train_erbin_finotello(X_train, y_train, X_test, y_test):
+    callbacks = [EarlyStopping(monitor='val_loss',
+                               patience=400,
+                               verbose=0,
+                               restore_best_weights=True
+                               ),
+                 ReduceLROnPlateau(monitor='val_loss',
+                                   factor=0.3,
+                                   patience=150,
+                                   verbose=0
+                                   ),
+                 ]
+    model = get_erbin_finotello_network()
+    history = model.fit(
+        X_train, y_train,
+        epochs=5000,
+        callbacks=callbacks,
+        validation_data=(X_test, y_test),
+        batch_size=1
+    )
+    return history.history['val_soft_acc'][-1]
+
+def check_h11_range(y):
+    outlier_counter = 0
+    outliers = []
+    for hodge in y:
+        if hodge < 1 or hodge > 16:
+            outlier_counter += 1
+            outliers += [hodge]
+    return outlier_counter, outliers
+
+def remove_outliers(X_train, y_train):
+    outlier_counter, outliers = check_h11_range(y_train)
+    print(f'Training data contains {outlier_counter} outliers (i.e. h11<1 or h11>16) for the first Hodge number: {outliers}')
+    print('Removing outliers...')
+    outlier_indices = []
+    for k in range(len(y_train)):
+        if y_train[k] < 1 or y_train[k] > 16:
+            outlier_indices += [k]
+    print(outlier_indices)
+    X_train = np.delete(X_train, outlier_indices, 0)
+    y_train = np.delete(y_train, outlier_indices, 0)
+    print('Outliers have been removed.')
+    outlier_counter, outliers = check_h11_range(y_train)
+    print(f'Training data now contains {outlier_counter} outliers (i.e. h11<1 or h11>16) for the first Hodge number: {outliers}')
+    return X_train, y_train
+
 
 if __name__ == '__main__':
     model = get_erbin_finotello_network()
-    print(model.summary())
+    model.summary()
+    data = load_data('', False)
+    X_train, X_test, y_train, y_test = train_test_split(np.array(data[0]), np.array(data[1])[:, 0], test_size=0.5)
+    X_train_without_outliers, y_train_without_outliers = remove_outliers(X_train, y_train)
+    print(f'Test Accuracy of Erbin-Finotello Neural Network after one run: {train_erbin_finotello(X_train_without_outliers, y_train_without_outliers, X_test, y_test)}')

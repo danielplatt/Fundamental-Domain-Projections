@@ -96,5 +96,5 @@ if __name__ == '__main__':
     model = get_hartford_network()
     model.summary()
     data = load_data('', False)
-    X_train, X_test, y_train, y_test = train_test_split(np.array(data[0]), np.array(data[1])[:, 1], test_size=0.5)
-    print(f'Test Accuracy of He Neural Network after one run: {train_hartford_network(X_train, y_train, X_test, y_test)}')
+    X_train, X_test, y_train, y_test = train_test_split(np.array(data[0]), np.array(data[1])[:, 0], test_size=0.5)
+    print(f'Test Accuracy of Hartford Neural Network after one run: {train_hartford_network(X_train, y_train, X_test, y_test)}')
