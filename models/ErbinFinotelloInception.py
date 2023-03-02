@@ -186,9 +186,10 @@ def train_erbin_finotello(X_train, y_train, X_test, y_test):
                                    verbose=0
                                    ),
                  ]
+    X_train_without_outliers, y_train_without_outliers = remove_outliers(X_train, y_train)
     model = get_erbin_finotello_network()
     history = model.fit(
-        X_train, y_train,
+        X_train_without_outliers, y_train_without_outliers,
         epochs=5000,
         callbacks=callbacks,
         validation_data=(X_test, y_test),
@@ -227,5 +228,4 @@ if __name__ == '__main__':
     model.summary()
     data = load_data('', False)
     X_train, X_test, y_train, y_test = train_test_split(np.array(data[0]), np.array(data[1])[:, 0], test_size=0.5)
-    X_train_without_outliers, y_train_without_outliers = remove_outliers(X_train, y_train)
-    print(f'Test Accuracy of Erbin-Finotello Neural Network after one run: {train_erbin_finotello(X_train_without_outliers, y_train_without_outliers, X_test, y_test)}')
+    print(f'Test Accuracy of Erbin-Finotello Neural Network after one run: {train_erbin_finotello(X_train, y_train, X_test, y_test)}')
