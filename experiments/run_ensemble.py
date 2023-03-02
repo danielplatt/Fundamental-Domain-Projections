@@ -19,11 +19,15 @@ def training(trainingtask, datasetpreprocessing='', datasetpermuted=False):
     return accuracy_result
 
 def main():
-    for trainingtask in [train_bull_he_jejjala_mishra_network, train_erbin_finotello, train_hartford_network, train_he_network]:
-        for datasetpreprocessing in ['', 'dirichlet', 'combinatorial']:
-            for datasetpermuted in [False, True]:
-                training(trainingtask, datasetpreprocessing, datasetpermuted)
-                print('---')
+    for trainingtask in [train_bull_he_jejjala_mishra_network, train_hartford_network, train_he_network]:
+        for datasetpermuted in [False, True]:
+            training(trainingtask, datasetpreprocessing='', datasetpermuted=datasetpermuted)
+            print('---')
+
+    for datasetpreprocessing in ['', 'dirichlet', 'combinatorial']:
+        for datasetpermuted in [False, True]:
+            training(train_erbin_finotello, datasetpreprocessing=datasetpreprocessing, datasetpermuted=datasetpermuted)
+            print('---')
 
 
 if __name__ == '__main__':
