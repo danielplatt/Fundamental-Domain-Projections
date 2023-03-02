@@ -8,6 +8,8 @@ from tensorflow.keras.optimizers   import Adam
 from tensorflow.keras.regularizers import l1_l2
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 
+from util.soft_acc import soft_acc
+
 
 def get_erbin_finotello_network():
     h11_deep_inception_model = scan_inception_model(input_shape=(12,15,),
@@ -168,7 +170,7 @@ def scan_inception_model(input_shape,
     # compile the model
     model.compile(optimizer=Adam(learning_rate=learning_rate),
                   loss='mean_squared_error',
-                  metrics=['mean_squared_error']
+                  metrics=['mean_squared_error', soft_acc]
                   )
 
     # return the compiled model

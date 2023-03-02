@@ -23,13 +23,13 @@ def main():
     for trainingtask in [train_bull_he_jejjala_mishra_network, train_hartford_network, train_he_network]:
         for datasetpermuted in [False, True]:
             this_acc = training(trainingtask, datasetpreprocessing='', datasetpermuted=datasetpermuted)
-            all_accuracies += [trainingtask.func_name, '', datasetpermuted, this_acc]
+            all_accuracies += [(trainingtask.__name__, '', datasetpermuted, this_acc)]
             print(all_accuracies)
 
     for datasetpreprocessing in ['', 'dirichlet', 'combinatorial']:
         for datasetpermuted in [False, True]:
             training(train_erbin_finotello, datasetpreprocessing=datasetpreprocessing, datasetpermuted=datasetpermuted)
-            all_accuracies += ['train_erbin_finotello', datasetpreprocessing, datasetpermuted, this_acc]
+            all_accuracies += [('train_erbin_finotello', datasetpreprocessing, datasetpermuted, this_acc)]
             print(all_accuracies)
 
     return all_accuracies

@@ -57,7 +57,7 @@ def train_bull_he_jejjala_mishra_network(X_train, y_train, X_test, y_test):
         validation_data=(X_test, y_test),
         batch_size=1
     )
-    return history.history['val_soft_acc'][-1]
+    return history.history['val_accuracy'][-1]
 
 
 if __name__ == '__main__':
