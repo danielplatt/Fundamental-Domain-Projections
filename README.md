@@ -2,8 +2,9 @@
 
 ## How to use
 
-Run `experiments/run_ensemble.py`.
+Install packages in `requirements.txt`. Run `experiments/run_ensemble.py`.
 This *should* download the raw text file containing the dataset, apply the necessary pre-processing, and run 12 training experiments.
+Tested with Python 3.10.
 
 ## Description of the repository
 
