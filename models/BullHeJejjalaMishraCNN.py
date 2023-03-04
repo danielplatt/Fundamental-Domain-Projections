@@ -55,7 +55,7 @@ def train_bull_he_jejjala_mishra_network(X_train, y_train, X_test, y_test):
         epochs=2000,
         callbacks=callbacks,
         validation_data=(X_test, y_test),
-        batch_size=1
+        batch_size=32
     )
     return history.history['val_accuracy'][-1]
 

@@ -195,7 +195,7 @@ def train_erbin_finotello(X_train, y_train, X_test, y_test):
         epochs=5000,
         callbacks=callbacks,
         validation_data=(X_test, y_test),
-        batch_size=1
+        batch_size=32
     )
     return history.history['val_soft_acc'][-1]
 
