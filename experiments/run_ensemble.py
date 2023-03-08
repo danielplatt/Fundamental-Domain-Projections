@@ -28,7 +28,7 @@ def main():
 
     for datasetpreprocessing in ['', 'dirichlet', 'combinatorial']:
         for datasetpermuted in [False, True]:
-            training(train_erbin_finotello, datasetpreprocessing=datasetpreprocessing, datasetpermuted=datasetpermuted)
+            this_acc = training(train_erbin_finotello, datasetpreprocessing=datasetpreprocessing, datasetpermuted=datasetpermuted)
             all_accuracies += [('train_erbin_finotello', datasetpreprocessing, datasetpermuted, this_acc)]
             print(all_accuracies)
 

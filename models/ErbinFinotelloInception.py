@@ -188,15 +188,16 @@ def train_erbin_finotello(X_train, y_train, X_test, y_test):
                                    verbose=0
                                    ),
                  ]
-    X_train_without_outliers, y_train_without_outliers = remove_outliers(X_train, y_train)
+    X_train, y_train = remove_outliers(X_train, y_train)
     model = get_erbin_finotello_network()
     history = model.fit(
-        X_train_without_outliers, y_train_without_outliers,
+        X_train, y_train,
         epochs=5000,
         callbacks=callbacks,
         validation_data=(X_test, y_test),
         batch_size=32
     )
+    print(history.history['val_soft_acc'])
     return history.history['val_soft_acc'][-1]
 
 def check_h11_range(y):
