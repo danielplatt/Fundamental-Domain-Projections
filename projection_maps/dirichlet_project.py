@@ -79,6 +79,7 @@ def dirichlet_project(matrix: np.array) -> np.array:
 
 
 if __name__ == '__main__':
-    x0 = np.array([[100,10],[1,0.1]])
-    print(x0 == 'a')
-    print(gradient_ascent_seeded(np.array([[0,1],[2,0]]),x0))
+    testlist=np.random.randint(6,size=(8,4,4))
+    for A in testlist:
+        A_proj = dirichlet_project(matrix=A)
+        print('original matrix \n '+str(A)+'\n comb_ord \n '+str(A_proj)+ '\n')
