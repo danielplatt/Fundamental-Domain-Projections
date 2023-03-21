@@ -48,7 +48,7 @@ def sort_cols(matrix, averaging):
     '''
     return np.transpose(sort_rows(np.transpose(matrix), averaging))
 
-def combinatorial_project(matrix: np.array, ascending=True, averaging='True', pert_is_permuted=False) -> np.array:
+def combinatorial_project(matrix: np.array, ascending=True, averaging=True, pert_is_permuted=False) -> np.array:
     '''Apply combinatorial projection map to a matrix of arbitrary dimensions. The projection proceeds in four steps
      1) perturb, 2) move min entry to top left, 3) sort by first row and column, 4) unperturb.
      :param matrix: matrix to be permuted
@@ -57,7 +57,9 @@ def combinatorial_project(matrix: np.array, ascending=True, averaging='True', pe
      :param pert_is_permuted: If False, pertubation matrix is identical for every execution. If True, the pert matrix is randomly permuted
      :return: permuted matrix
     '''
+
     if ascending:
+    # the ascending case reduces to descending by changing the the sign of both the matrix and the result
         return -combinatorial_project(matrix=-matrix, ascending=False, averaging=averaging,    pert_is_permuted=pert_is_permuted)
 
 
@@ -78,7 +80,7 @@ def combinatorial_project(matrix: np.array, ascending=True, averaging='True', pe
 if __name__ == '__main__':
     testlist=np.random.randint(6,size=(8,4,4))
     for A in testlist:
-        A_proj = combinatorial_project(matrix=A,ascending = False ,averaging=False)
+        A_proj = combinatorial_project(matrix=A, ascending = False ,averaging=True)
         print('original matrix \n '+str(A)+'\n comb_ord \n '+str(A_proj)+ '\n')
 
 

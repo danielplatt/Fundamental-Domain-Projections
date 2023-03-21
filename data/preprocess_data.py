@@ -46,7 +46,7 @@ def preprocess_data(projection_type: str, is_permuted: bool) -> np.array:
     elif projection_type == 'combinatorial':
         new_matrices = []
         for matrix in tqdm(matrices):
-            new_matrices += [dirichlet_project(matrix)]
+            new_matrices += [combinatorial_project(matrix)]
         matrices = new_matrices
 
     file_name = generate_filepath(projection_type, is_permuted)
