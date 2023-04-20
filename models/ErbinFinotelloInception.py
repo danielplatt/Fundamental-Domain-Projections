@@ -188,7 +188,7 @@ def train_erbin_finotello(X_train, y_train, X_test, y_test):
                                    verbose=0
                                    ),
                  ]
-    X_train, y_train = remove_outliers(X_train, y_train)
+    # X_train, y_train = remove_outliers(X_train, y_train)
     model = get_erbin_finotello_network()
     history = model.fit(
         X_train, y_train,
